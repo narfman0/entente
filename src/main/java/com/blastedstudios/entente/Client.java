@@ -11,10 +11,11 @@ import com.badlogic.gdx.net.Socket;
 public class Client extends BaseNetwork {
 	private HostStruct hostStruct;
 	
-	public void connect(String host, int port){
+	public boolean connect(String host, int port){
 		Socket socket = Gdx.net.newClientSocket(Protocol.TCP, host, port, null);
 		hostStruct = new HostStruct(socket);
 		Logger.getLogger(this.getClass().getName()).fine("Connected to server: " + socket.getRemoteAddress());
+		return isConnected();
 	}
 	
 	@Override public void update(){

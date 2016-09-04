@@ -18,13 +18,13 @@ public abstract class BaseNetwork {
 	private static final HashMap<Class<?>, Integer> messageToID = new HashMap<>();
 	protected final LinkedList<MessageStruct> sendQueue = new LinkedList<>();
 	private final HashMap<Class<?>, List<IMessageListener>> listeners = new HashMap<>();
-	private int nextMessageIdentifier = 1;
+	private static int nextMessageIdentifier = 1;
 	
 	/**
 	 * Register a protocol buffer generated class as something to be ingested across the network
 	 * @param parentClass: generated class from protobuf
 	 */
-	public void registerMessageOrigin(Class<?> parentClass){
+	public static void registerMessageOrigin(Class<?> parentClass){
 		for(Class<?> clazz : parentClass.getClasses())
 			try {
 				if(!Message.class.isAssignableFrom(clazz))
@@ -43,8 +43,10 @@ public abstract class BaseNetwork {
 	 * a.k.a. receive, heed, execute, send
 	 */
 	public void receiveMessage(Message message, Socket origin){
-		for(IMessageListener listener : listeners.get(message.getClass()))
-			listener.receive(message, origin);
+		List<IMessageListener> msgListeners = listeners.get(message.getClass());
+		if(msgListeners != null)
+			for(IMessageListener listener : msgListeners)
+				listener.receive(message, origin);
 	}
 
 	/**
@@ -58,15 +60,20 @@ public abstract class BaseNetwork {
 		sendQueue.add(new MessageStruct(message, null));
 	}
 	
-	public void subscribe(Class<? extends Message> clazz, IMessageListener listener){
+	public void subscribe(Class<?> clazz, IMessageListener listener){
 		if(!listeners.containsKey(clazz))
 			listeners.put(clazz, new LinkedList<>());
 		listeners.get(clazz).add(listener);
 	}
 	
-	public void unsubscribe(Class<? extends Message> clazz, IMessageListener listener){
+	public void unsubscribe(Class<?> clazz, IMessageListener listener){
 		if(listeners.containsKey(clazz))
 			listeners.get(clazz).remove(listener);
+	}
+	
+	public void unsubscribe(IMessageListener listener){
+		for(List<IMessageListener> listenerList : listeners.values())
+			listenerList.remove(listener);
 	}
 	
 	public void clearListeners(){
