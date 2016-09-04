@@ -1,5 +1,6 @@
 package com.blastedstudios.entente;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.Socket;
@@ -9,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.Message;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -89,9 +89,9 @@ public abstract class BaseNetwork {
 		for(MessageStruct sendStruct : messages){
 			if(sendStruct.destinations == null || sendStruct.destinations.contains(target.socket)){
 				try {
-					target.outStream.writeUInt32NoTag(messageToID.get(sendStruct.message.getClass()));
-					target.outStream.writeUInt32NoTag(sendStruct.message.getSerializedSize());
-					target.outStream.writeRawBytes(sendStruct.message.toByteArray());
+					target.outStream.writeInt(messageToID.get(sendStruct.message.getClass()));
+					target.outStream.writeInt(sendStruct.message.getSerializedSize());
+					target.outStream.write(sendStruct.message.toByteArray());
 					Logger.getLogger(BaseNetwork.class.getName()).fine("Sent message successfully: " + sendStruct.message.getClass().getSimpleName());
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -101,13 +101,14 @@ public abstract class BaseNetwork {
 		target.outStream.flush();
 	}
 	
-	protected static List<MessageStruct> receiveMessages(CodedInputStream stream, Socket socket){
+	protected static List<MessageStruct> receiveMessages(DataInputStream stream, Socket socket){
 		List<MessageStruct> messages = new LinkedList<>();
 		try {
 			while(socket.getInputStream().available() > 0 && socket.isConnected()){
-				int messageID = stream.readUInt32();
-				int length = stream.readUInt32();
-				byte[] buffer = stream.readRawBytes(length);
+				int messageID = stream.readInt();
+				int length = stream.readInt();
+				byte[] buffer = new byte[length];
+				stream.read(buffer);
 				Method messageParseID = idToParseMethod.get(messageID);
 				Message message = (Message)messageParseID.invoke(idToMessage.get(messageID), buffer);
 				messages.add(new MessageStruct(message, Arrays.asList(socket)));
