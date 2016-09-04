@@ -12,6 +12,7 @@ import com.badlogic.gdx.net.Socket;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.Message;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class BaseNetwork {
 	private static final HashMap<Integer, Method> idToParseMethod = new HashMap<>();
 	private static final HashMap<Integer, Class<?>> idToMessage = new HashMap<>();
