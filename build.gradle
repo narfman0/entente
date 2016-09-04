@@ -1,0 +1,40 @@
+apply plugin: "java"
+apply plugin: "eclipse"
+apply plugin: "application"
+apply plugin: 'maven'
+
+group = 'com.blastedstudios'
+mainClassName = "com.blastedstudios.entente.Host"
+version = '1.0.0'
+description = "A java - google protocol buffers based communication library"
+defaultTasks 'eclipse', 'build', 'install'
+
+ext {
+    appName = "entente"
+    gdxVersion = '1.9.3'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    maven { url "http://maven.formreturn.com/repository/" }
+    maven { url "https://mvnrepository.com/artifact/" }
+}
+
+dependencies {
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+	compile group: 'com.google.protobuf', name: 'protobuf-java', version: '3.0.0'
+    testCompile 'junit:junit:4.12'
+}
