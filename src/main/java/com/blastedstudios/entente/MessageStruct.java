@@ -1,8 +1,8 @@
 package com.blastedstudios.entente;
 
+import java.net.Socket;
 import java.util.List;
 
-import com.badlogic.gdx.net.Socket;
 import com.google.protobuf.Message;
 
 public class MessageStruct{

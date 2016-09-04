@@ -1,6 +1,8 @@
 package com.blastedstudios.entente;
 
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,33 +13,32 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.Protocol;
-import com.badlogic.gdx.net.ServerSocket;
-import com.badlogic.gdx.net.Socket;
-
 public class Host extends BaseNetwork{
 	private final List<HostStruct> clients = Collections.synchronizedList(new LinkedList<HostStruct>());
 	private ServerSocket serverSocket;
 	private Timer timer;
 	
 	public Host(int port){
-		serverSocket = Gdx.net.newServerSocket(Protocol.TCP, port, null);
-		timer = new Timer("Server accept thread");
-		timer.schedule(new TimerTask() {
-			@Override public void run() {
-				try{
-					Socket socket = serverSocket.accept(null);
-					HostStruct client = new HostStruct(socket); 
-					clients.add(client);
-					Logger.getLogger(this.getClass().getName()).fine("Added client: " + socket.getRemoteAddress());
-				}catch(Exception e){
-					Logger.getLogger(this.getClass().getName()).warning("Exception received, aborting host thread. Message: " + e.getMessage());
-					this.cancel();
+		try {
+			serverSocket = new ServerSocket(port);
+			timer = new Timer("Server accept thread");
+			timer.schedule(new TimerTask() {
+				@Override public void run() {
+					try{
+						Socket socket = serverSocket.accept();
+						HostStruct client = new HostStruct(socket); 
+						clients.add(client);
+						Logger.getLogger(this.getClass().getName()).fine("Added client: " + socket.toString());
+					}catch(Exception e){
+						Logger.getLogger(this.getClass().getName()).warning("Exception received, aborting host thread. Message: " + e.getMessage());
+						this.cancel();
+					}
 				}
-			}
-		}, 0, 100);
-		Logger.getLogger(this.getClass().getName()).info("Network created, listening for conenctions on port: " + port);
+			}, 0, 100);
+			Logger.getLogger(this.getClass().getName()).info("Network created, listening for conenctions on port: " + port);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	@Override public void update(){
@@ -51,7 +52,7 @@ public class Host extends BaseNetwork{
 		for(Iterator<HostStruct> iter = clients.iterator(); iter.hasNext();){
 			HostStruct client = iter.next();
 			if(!client.socket.isConnected()){
-				Logger.getLogger(this.getClass().getName()).info("Disconnecting client: " + client.socket.getRemoteAddress());
+				Logger.getLogger(this.getClass().getName()).info("Disconnecting client: " + client.socket.toString());
 				iter.remove();
 			}else{
 				List<MessageStruct> messages = receiveMessages(client.inStream, client.socket);
@@ -71,10 +72,14 @@ public class Host extends BaseNetwork{
 	
 	@Override public void dispose(){
 		if(serverSocket != null)
-			serverSocket.dispose();
+			try {
+				serverSocket.close();
+			} catch (IOException e) {}
 		serverSocket = null;
 		for(HostStruct client : clients)
-			client.socket.dispose();
+			try {
+				client.socket.close();
+			} catch (IOException e) {}
 		if(timer != null)
 			timer.cancel();
 		timer = null;

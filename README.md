@@ -3,11 +3,6 @@ entente
 
 A java - google protocol buffers based communication library
 
-TODO
-----
-
-* Remove libGDX dependency
-
 License
 -------
 

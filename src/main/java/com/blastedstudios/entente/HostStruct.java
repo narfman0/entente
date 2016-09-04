@@ -1,6 +1,8 @@
 package com.blastedstudios.entente;
 
-import com.badlogic.gdx.net.Socket;
+import java.io.IOException;
+import java.net.Socket;
+
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.CodedOutputStream;
 
@@ -11,8 +13,20 @@ public class HostStruct {
 	
 	public HostStruct(Socket socket){
 		this.socket = socket;
-		inStream = CodedInputStream.newInstance(socket.getInputStream());
-		outStream = CodedOutputStream.newInstance(socket.getOutputStream());
+		CodedInputStream istream = null;
+		CodedOutputStream ostream = null;
+		try {
+			istream = CodedInputStream.newInstance(socket.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			ostream = CodedOutputStream.newInstance(socket.getOutputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		inStream = istream;
+		outStream = ostream;
 	}
 	
 	public boolean isConnected(){
@@ -20,6 +34,6 @@ public class HostStruct {
 	}
 	
 	public String toString(){
-		return socket.getRemoteAddress();
+		return socket.toString();
 	}
 }

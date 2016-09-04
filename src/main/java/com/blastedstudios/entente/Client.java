@@ -1,20 +1,24 @@
 package com.blastedstudios.entente;
 
 import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.logging.Logger;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.Protocol;
-import com.badlogic.gdx.net.Socket;
 
 public class Client extends BaseNetwork {
 	private HostStruct hostStruct;
 	
 	public boolean connect(String host, int port){
-		Socket socket = Gdx.net.newClientSocket(Protocol.TCP, host, port, null);
-		hostStruct = new HostStruct(socket);
-		Logger.getLogger(this.getClass().getName()).fine("Connected to server: " + socket.getRemoteAddress());
+		try {
+			Socket socket = new Socket(host, port);
+			hostStruct = new HostStruct(socket);
+			Logger.getLogger(this.getClass().getName()).fine("Connected to server: " + socket.toString());
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return isConnected();
 	}
 	
@@ -37,7 +41,9 @@ public class Client extends BaseNetwork {
 	
 	@Override public void dispose(){
 		if(hostStruct != null && hostStruct.socket != null)
-			hostStruct.socket.dispose();
+			try {
+				hostStruct.socket.close();
+			} catch (IOException e) {}
 		hostStruct = null;
 	}
 

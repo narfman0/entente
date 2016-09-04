@@ -2,13 +2,13 @@ package com.blastedstudios.entente;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.badlogic.gdx.net.Socket;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.Message;
 
@@ -111,7 +111,7 @@ public abstract class BaseNetwork {
 				Method messageParseID = idToParseMethod.get(messageID);
 				Message message = (Message)messageParseID.invoke(idToMessage.get(messageID), buffer);
 				messages.add(new MessageStruct(message, Arrays.asList(socket)));
-				Logger.getLogger(BaseNetwork.class.getName()).fine("Received from: " + socket.getRemoteAddress());
+				Logger.getLogger(BaseNetwork.class.getName()).fine("Received from: " + socket.toString());
 			}
 		} catch (Exception e) {
 			Logger.getLogger(BaseNetwork.class.getName()).severe("Exception reading message, message: " + e.getMessage());
