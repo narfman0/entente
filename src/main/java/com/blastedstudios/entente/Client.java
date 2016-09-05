@@ -34,7 +34,7 @@ public class Client extends BaseNetwork {
 		}
 		try{
 			sendMessages(sendQueue, hostStruct);
-		}catch(IOException e){
+		}catch(Exception e){
 			e.printStackTrace();
 			dispose(); //TODO send message internally telling client we disconnected. :(
 		}
