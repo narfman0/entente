@@ -14,7 +14,7 @@ import java.util.TimerTask;
 import java.util.logging.Logger;
 
 public class Host extends BaseNetwork{
-	private final List<HostStruct> clients = Collections.synchronizedList(new LinkedList<HostStruct>());
+	private final List<HostStruct> clients = Collections.synchronizedList(new LinkedList<>());
 	private ServerSocket serverSocket;
 	private Timer timer;
 	
@@ -49,22 +49,28 @@ public class Host extends BaseNetwork{
 		// no but you're right... *shrugs*
 		sendQueue.clear();
 		
-		for(Iterator<HostStruct> iter = clients.iterator(); iter.hasNext();){
-			HostStruct client = iter.next();
-			if(!client.socket.isConnected()){
-				Logger.getLogger(this.getClass().getName()).info("Disconnecting client: " + client.socket.toString());
-				iter.remove();
-			}else{
-				List<MessageStruct> messages = receiveMessages(client.inStream, client.socket);
-				for(MessageStruct struct : messages)
-					receiveMessage(struct.message, client.socket);
-				try{
-					sendMessages(currentQueue, client);
-				} catch (SocketException e1) {
-					Logger.getLogger(this.getClass().getName()).info("Disconnected from server, removing client: " + client);
+		synchronized (clients) {
+			for(Iterator<HostStruct> iter = clients.iterator(); iter.hasNext();){
+				HostStruct client = iter.next();
+				if(!client.socket.isConnected()){
+					Logger.getLogger(this.getClass().getName()).info("Disconnecting client: " + client.socket.toString());
 					iter.remove();
-				} catch (IOException e) {
-					Logger.getLogger(this.getClass().getName()).info("Disconnected from server?");
+				}else{
+					try{
+						List<MessageStruct> messages = receiveMessages(client.inStream, client.socket);
+						for(MessageStruct struct : messages)
+							receiveMessage(struct.message, client.socket);
+					}catch(Exception e){
+						dispose();
+					}
+					try{
+						sendMessages(currentQueue, client);
+					} catch (SocketException e1) {
+						Logger.getLogger(this.getClass().getName()).info("Disconnected from server, removing client: " + client);
+						iter.remove();
+					} catch (IOException e) {
+						Logger.getLogger(this.getClass().getName()).info("Disconnected from server?");
+					}
 				}
 			}
 		}

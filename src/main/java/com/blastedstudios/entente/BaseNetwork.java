@@ -2,6 +2,7 @@ package com.blastedstudios.entente;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.Arrays;
@@ -88,35 +89,26 @@ public abstract class BaseNetwork {
 	protected static void sendMessages(List<MessageStruct> messages, HostStruct target) throws IOException{
 		for(MessageStruct sendStruct : messages){
 			if(sendStruct.destinations == null || sendStruct.destinations.contains(target.socket)){
-				try {
-					target.outStream.writeInt(messageToID.get(sendStruct.message.getClass()));
-					target.outStream.writeInt(sendStruct.message.getSerializedSize());
-					target.outStream.write(sendStruct.message.toByteArray());
-					Logger.getLogger(BaseNetwork.class.getName()).fine("Sent message successfully: " + sendStruct.message.getClass().getSimpleName());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				target.outStream.writeInt(messageToID.get(sendStruct.message.getClass()));
+				target.outStream.writeInt(sendStruct.message.getSerializedSize());
+				target.outStream.write(sendStruct.message.toByteArray());
+				Logger.getLogger(BaseNetwork.class.getName()).fine("Sent message successfully: " + sendStruct.message.getClass().getSimpleName());
 			}
 		}
 		target.outStream.flush();
 	}
 	
-	protected static List<MessageStruct> receiveMessages(DataInputStream stream, Socket socket){
+	protected static List<MessageStruct> receiveMessages(DataInputStream stream, Socket socket) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException{
 		List<MessageStruct> messages = new LinkedList<>();
-		try {
-			while(socket.getInputStream().available() > 0 && socket.isConnected()){
-				int messageID = stream.readInt();
-				int length = stream.readInt();
-				byte[] buffer = new byte[length];
-				stream.read(buffer);
-				Method messageParseID = idToParseMethod.get(messageID);
-				Message message = (Message)messageParseID.invoke(idToMessage.get(messageID), buffer);
-				messages.add(new MessageStruct(message, Arrays.asList(socket)));
-				Logger.getLogger(BaseNetwork.class.getName()).fine("Received from: " + socket.toString());
-			}
-		} catch (Exception e) {
-			Logger.getLogger(BaseNetwork.class.getName()).severe("Exception reading message, message: " + e.getMessage());
-			e.printStackTrace();
+		while(socket.getInputStream().available() > 0 && socket.isConnected()){
+			int messageID = stream.readInt();
+			int length = stream.readInt();
+			byte[] buffer = new byte[length];
+			stream.read(buffer);
+			Method messageParseID = idToParseMethod.get(messageID);
+			Message message = (Message)messageParseID.invoke(idToMessage.get(messageID), buffer);
+			messages.add(new MessageStruct(message, Arrays.asList(socket)));
+			Logger.getLogger(BaseNetwork.class.getName()).fine("Received from: " + socket.toString());
 		}
 		return messages;
 	}

@@ -2,7 +2,6 @@ package com.blastedstudios.entente;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -14,9 +13,7 @@ public class Client extends BaseNetwork {
 			Socket socket = new Socket(host, port);
 			hostStruct = new HostStruct(socket);
 			Logger.getLogger(this.getClass().getName()).fine("Connected to server: " + socket.toString());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return isConnected();
@@ -25,10 +22,15 @@ public class Client extends BaseNetwork {
 	@Override public void update(){
 		if(!isConnected())
 			return;
-		List<MessageStruct> messages = receiveMessages(hostStruct.inStream, hostStruct.socket);
-		for(MessageStruct message : messages){
-			receiveMessage(message.message, hostStruct.socket);
-			Logger.getLogger(this.getClass().getName()).fine("Message received: " + message.message);
+		try {
+			List<MessageStruct> messages = receiveMessages(hostStruct.inStream, hostStruct.socket);
+			for(MessageStruct message : messages){
+				receiveMessage(message.message, hostStruct.socket);
+				Logger.getLogger(this.getClass().getName()).fine("Message received: " + message.message);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			dispose();
 		}
 		try{
 			sendMessages(sendQueue, hostStruct);
