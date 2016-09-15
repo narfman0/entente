@@ -13,6 +13,12 @@ ext {
     appName = "entente"
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': '$mainClassName'
+    }
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
@@ -26,10 +32,6 @@ artifacts {
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-    maven { url "http://maven.formreturn.com/repository/" }
-    maven { url "https://mvnrepository.com/artifact/" }
 }
 
 dependencies {
