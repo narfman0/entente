@@ -7,7 +7,7 @@ group = 'com.blastedstudios'
 mainClassName = "com.blastedstudios.entente.Host"
 version = '1.0.0'
 description = "A java - google protocol buffers based communication library"
-defaultTasks 'eclipse', 'build', 'install', 'javadoc'
+defaultTasks 'eclipse', 'build', 'install', 'javadoc', 'createPom'
 
 ext {
     appName = "entente"
@@ -43,4 +43,14 @@ repositories {
 dependencies {
 	compile group: 'com.google.protobuf', name: 'protobuf-java', version: '3.0.0'
     testCompile 'junit:junit:4.12'
+}
+
+task createPom {
+    pom {
+        project {
+		    name "${appName}";
+		    description "${description}";
+		    url "https://github.com/narfman0/entente";
+        }
+    }.writeTo("$buildDir/poms/pom-default.xml")
 }
