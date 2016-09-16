@@ -2,6 +2,7 @@ apply plugin: "java"
 apply plugin: "eclipse"
 apply plugin: "application"
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 group = 'com.blastedstudios'
 mainClassName = "com.blastedstudios.entente.Host"
@@ -31,9 +32,7 @@ task javadocsJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocsJar
+    archives jar, sourcesJar, javadocsJar
 }
 
 repositories {
@@ -44,6 +43,10 @@ repositories {
 dependencies {
 	compile group: 'com.google.protobuf', name: 'protobuf-java', version: '3.0.0'
     testCompile 'junit:junit:4.12'
+}
+
+signing {
+    sign configurations.archives
 }
 
 task createPom {
