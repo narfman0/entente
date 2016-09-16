@@ -13,6 +13,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
+/**
+ * Host class to distribute messages to client(s) 
+ */
 public class Host extends BaseNetwork{
 	private final List<HostStruct> clients = Collections.synchronizedList(new LinkedList<>());
 	private ServerSocket serverSocket;
@@ -41,6 +44,10 @@ public class Host extends BaseNetwork{
 		}
 	}
 	
+	/**
+	 * Receive messages from all clients and ingest to a queue for later disbursement. Send what messages have
+	 * been prepared.
+	 */
 	@Override public void update(){
 		// Build new list of messages to send this frame. Grab messages initially, don't check queue again!
 		ArrayList<MessageStruct> currentQueue = new ArrayList<>(sendQueue);

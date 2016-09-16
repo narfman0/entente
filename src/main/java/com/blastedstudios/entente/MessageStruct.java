@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.google.protobuf.Message;
 
+/**
+ * Holder for messages to send to target socket(s)
+ */
 public class MessageStruct{
 	public final Message message;
 	public final List<Socket> destinations;

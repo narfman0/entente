@@ -5,6 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * Holds information for hosts, including the socket and streams
+ */
 public class HostStruct {
 	public final Socket socket;
 	public final DataOutputStream outStream;
@@ -28,6 +31,9 @@ public class HostStruct {
 		outStream = ostream;
 	}
 	
+	/**
+	 * @return true if socket is connected to remote
+	 */
 	public boolean isConnected(){
 		return socket != null && socket.isConnected();
 	}

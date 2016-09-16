@@ -7,7 +7,7 @@ group = 'com.blastedstudios'
 mainClassName = "com.blastedstudios.entente.Host"
 version = '1.0.0'
 description = "A java - google protocol buffers based communication library"
-defaultTasks 'eclipse', 'build', 'install'
+defaultTasks 'eclipse', 'build', 'install', 'javadoc'
 
 ext {
     appName = "entente"
@@ -24,9 +24,15 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
+task javadocsJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
 artifacts {
     archives jar
     archives sourcesJar
+    archives javadocsJar
 }
 
 repositories {

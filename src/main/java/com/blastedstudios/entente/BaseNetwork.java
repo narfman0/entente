@@ -58,34 +58,67 @@ public abstract class BaseNetwork {
 		sendQueue.add(new MessageStruct(message, destinations));
 	}
 
+	/**
+	 * @see BaseNetwork#send(Message, List)
+	 */
 	public void send(Message message) {
 		sendQueue.add(new MessageStruct(message, null));
 	}
 	
+	/**
+	 * Listen to a particular message
+	 * @param clazz: protobuf message class to which we will listen
+	 * @param listener: callback upon reception of message of type @param clazz
+	 */
 	public void subscribe(Class<?> clazz, IMessageListener listener){
 		if(!listeners.containsKey(clazz))
 			listeners.put(clazz, new LinkedList<>());
 		listeners.get(clazz).add(listener);
 	}
 	
+	/**
+	 * Remove @param listener from receiving messages of type @param clazz 
+	 */
 	public void unsubscribe(Class<?> clazz, IMessageListener listener){
 		if(listeners.containsKey(clazz))
 			listeners.get(clazz).remove(listener);
 	}
 	
+	/**
+	 * Unsubscribe listener from receiving any messages
+	 */
 	public void unsubscribe(IMessageListener listener){
 		for(List<IMessageListener> listenerList : listeners.values())
 			listenerList.remove(listener);
 	}
 	
+	/**
+	 * Remove all listeners
+	 */
 	public void clearListeners(){
 		listeners.clear();
 	}
 
+	/**
+	 * Close any sockets and cleanly disconnect from remote(s)
+	 */
 	public abstract void dispose();
+	
+	/**
+	 * @return true if connected to a remote
+	 */
 	public abstract boolean isConnected();
+	
+	/**
+	 * Tick the socket to receive and send messages
+	 */
 	public abstract void update();
 	
+	/**
+	 * Send each message in queue to @param target hosts
+	 * @param messages: Messages to send
+	 * @param target: Destination host to which we shall send @param messages
+	 */
 	protected static void sendMessages(List<MessageStruct> messages, HostStruct target) throws IOException{
 		for(MessageStruct sendStruct : messages){
 			if(sendStruct.destinations == null || sendStruct.destinations.contains(target.socket)){
