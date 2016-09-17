@@ -111,8 +111,9 @@ public abstract class BaseNetwork {
 	
 	/**
 	 * Tick the socket to receive and send messages
+	 * @return true if we are still connected
 	 */
-	public abstract void update();
+	public abstract boolean update();
 	
 	/**
 	 * Send each message in queue to @param target hosts

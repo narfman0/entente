@@ -19,26 +19,23 @@ public class Client extends BaseNetwork {
 		return isConnected();
 	}
 	
-	@Override public void update(){
+	@Override public boolean update(){
 		if(!isConnected())
-			return;
+			return false;
 		try {
 			List<MessageStruct> messages = receiveMessages(hostStruct.inStream, hostStruct.socket);
 			for(MessageStruct message : messages){
 				receiveMessage(message.message, hostStruct.socket);
 				Logger.getLogger(this.getClass().getName()).fine("Message received: " + message.message);
 			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			dispose();
-		}
-		try{
 			sendMessages(sendQueue, hostStruct);
 		}catch(Exception e){
 			e.printStackTrace();
 			dispose(); //TODO send message internally telling client we disconnected. :(
+			return false;
 		}
 		sendQueue.clear();
+		return true;
 	}
 	
 	@Override public void dispose(){

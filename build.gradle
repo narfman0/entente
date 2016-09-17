@@ -6,7 +6,7 @@ apply plugin: 'signing'
 
 group = 'com.blastedstudios'
 mainClassName = "com.blastedstudios.entente.Host"
-version = '1.0.0'
+version = '1.0.1'
 description = "A java - google protocol buffers based communication library"
 defaultTasks 'eclipse', 'build', 'install', 'javadoc', 'createPom'
 

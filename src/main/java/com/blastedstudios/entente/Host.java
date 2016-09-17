@@ -3,7 +3,6 @@ package com.blastedstudios.entente;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -48,7 +47,7 @@ public class Host extends BaseNetwork{
 	 * Receive messages from all clients and ingest to a queue for later disbursement. Send what messages have
 	 * been prepared.
 	 */
-	@Override public void update(){
+	@Override public boolean update(){
 		// Build new list of messages to send this frame. Grab messages initially, don't check queue again!
 		ArrayList<MessageStruct> currentQueue = new ArrayList<>(sendQueue);
 		// "but jrob, thats a queue that could be modified between copying and clearing, you should iterate..."
@@ -60,27 +59,25 @@ public class Host extends BaseNetwork{
 			for(Iterator<HostStruct> iter = clients.iterator(); iter.hasNext();){
 				HostStruct client = iter.next();
 				if(!client.socket.isConnected()){
-					Logger.getLogger(this.getClass().getName()).info("Disconnecting client: " + client.socket.toString());
+					Logger.getLogger(this.getClass().getName()).info("Disconnected client: " + client);
 					iter.remove();
+					closeClient(client);
 				}else{
 					try{
 						List<MessageStruct> messages = receiveMessages(client.inStream, client.socket);
 						for(MessageStruct struct : messages)
 							receiveMessage(struct.message, client.socket);
-					}catch(Exception e){
-						dispose();
-					}
-					try{
 						sendMessages(currentQueue, client);
-					} catch (SocketException e1) {
-						Logger.getLogger(this.getClass().getName()).info("Disconnected from server, removing client: " + client);
+					} catch (Exception e) {
+						Logger.getLogger(this.getClass().getName()).info("Disconnected client: " + client + " from exception with message: " + e.getMessage());
 						iter.remove();
-					} catch (IOException e) {
-						Logger.getLogger(this.getClass().getName()).info("Disconnected from server?");
+						closeClient(client);
+						e.printStackTrace();
 					}
 				}
 			}
 		}
+		return true;
 	}
 	
 	@Override public void dispose(){
@@ -90,12 +87,16 @@ public class Host extends BaseNetwork{
 			} catch (IOException e) {}
 		serverSocket = null;
 		for(HostStruct client : clients)
-			try {
-				client.socket.close();
-			} catch (IOException e) {}
+			closeClient(client);
 		if(timer != null)
 			timer.cancel();
 		timer = null;
+	}
+	
+	private static void closeClient(HostStruct client){
+		try {
+			client.socket.close();
+		} catch (IOException e) {}
 	}
 
 	@Override public boolean isConnected() {
