@@ -1,3 +1,4 @@
+=======
 entente
 =======
 
@@ -9,65 +10,70 @@ Usage
 This relies on google protocol buffer generated messages. We will assume you have
 generated a class `Messages` which defines `Ping` and `Ack` messages.
 
-1. Register the generated class(es) via the static `registerMessageOrigin`
-call in client and server:
+1. Register the generated class(es) via the static ``registerMessageOrigin`` call in client and server:
 
-```java
-	BaseNetwork.registerMessageOrigin(Messages.class);
-```
+.. code-block::
+
+    BaseNetwork.registerMessageOrigin(Messages.class);
 		
 2. Set up Host:
 
-```java
+.. code-block::
+
 	Host host = new Host(43216);
-```
 
 3. Ensure host is being updated every frame/update cycle:
 
-```java
+.. code-block::
+
 	host.update();
-```
 	
 4. Set up client:
 
-```java
+.. code-block::
+
 	Client client = new Client("localhost", 43216);
-```
 	
 5. Ensure client is being updated every frame/update cycle:
 
-```java
+.. code-block::
+
 	client.update();
-```
-	
+
 6. Register listener(s) for client:
 
-```java
+.. code-block::
+
 	client.subscribe(Ack.class, new IMessageListener<Ack>(){
 		void receive(Ack message, Socket origin){
 			System.out.println("Received Ack!");
 		}
 	});
-```
 		
 7. Register listener(s) for host:
 
-```java
+.. code-block::
+
 	host.subscribe(Ping.class, new IMessageListener<Ping>(){
 		void receive(Ping message, Socket origin){
 			host.send(Ack.getDefaultInstance());
 		}
 	});
-```
 
 8. Test by sending the message `Ping` from your client to server:
 
-```java
+.. code-block::
+
 	client.send(Ping.getDefaultInstance());
-```
 	
 Your host, which subscribed to `Ping.class`, will receive the message and
 immediately send and `Ack`. Congrats!
+
+TODO
+----
+
+1. Set up a DDM-like mechanism through which we filter messages. Update
+subscribe call or add a updateRegion call to take filter-like arguments.
 
 License
 -------
