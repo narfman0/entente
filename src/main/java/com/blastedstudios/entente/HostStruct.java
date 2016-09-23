@@ -4,6 +4,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
+
+import com.blastedstudios.entente.filter.Region;
 
 /**
  * Holds information for hosts, including the socket and streams
@@ -12,6 +15,7 @@ class HostStruct {
 	public final Socket socket;
 	public final DataOutputStream outStream;
 	public final DataInputStream inStream;
+	public final HashMap<Integer, Region<?>> regions = new HashMap<>();
 	
 	public HostStruct(Socket socket){
 		this.socket = socket;
