@@ -3,7 +3,6 @@ package com.blastedstudios.entente;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -48,13 +47,6 @@ public class Host extends BaseNetwork{
 	 * been prepared.
 	 */
 	@Override public boolean update(){
-		// Build new list of messages to send this frame. Grab messages initially, don't check queue again!
-		ArrayList<MessageStruct> currentQueue = new ArrayList<>(sendQueue);
-		// "but jrob, thats a queue that could be modified between copying and clearing, you should iterate..."
-		// GTFO /uninstall /uninstall /uninstall
-		// no but you're right... *shrugs*
-		sendQueue.clear();
-		
 		synchronized (clients) {
 			for(Iterator<HostStruct> iter = clients.iterator(); iter.hasNext();){
 				HostStruct client = iter.next();
@@ -64,10 +56,8 @@ public class Host extends BaseNetwork{
 					closeClient(client);
 				}else{
 					try{
-						List<MessageStruct> messages = receiveMessages(client.inStream, client.socket);
-						for(MessageStruct struct : messages)
-							receiveMessage(struct.message, client.socket);
-						sendMessages(currentQueue, client);
+						receiveMessages(client.inStream, client.socket);
+						sendMessages(client);
 					} catch (Exception e) {
 						Logger.getLogger(this.getClass().getName()).info("Disconnected client: " + client + " from exception with message: " + e.getMessage());
 						iter.remove();

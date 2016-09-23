@@ -8,7 +8,7 @@ import java.net.Socket;
 /**
  * Holds information for hosts, including the socket and streams
  */
-public class HostStruct {
+class HostStruct {
 	public final Socket socket;
 	public final DataOutputStream outStream;
 	public final DataInputStream inStream;

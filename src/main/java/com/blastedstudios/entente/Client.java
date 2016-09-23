@@ -2,7 +2,6 @@ package com.blastedstudios.entente;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.List;
 import java.util.logging.Logger;
 
 public class Client extends BaseNetwork {
@@ -22,12 +21,8 @@ public class Client extends BaseNetwork {
 		if(!isConnected())
 			return false;
 		try {
-			List<MessageStruct> messages = receiveMessages(hostStruct.inStream, hostStruct.socket);
-			for(MessageStruct message : messages){
-				receiveMessage(message.message, hostStruct.socket);
-				Logger.getLogger(this.getClass().getName()).fine("Message received: " + message.message);
-			}
-			sendMessages(sendQueue, hostStruct);
+			receiveMessages(hostStruct.inStream, hostStruct.socket);
+			sendMessages(hostStruct);
 		}catch(Exception e){
 			e.printStackTrace();
 			dispose(); //TODO send message internally telling client we disconnected. :(

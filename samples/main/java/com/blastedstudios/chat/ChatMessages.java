@@ -19,21 +19,11 @@ public final class ChatMessages {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional string origin = 1;</code>
-     */
-    java.lang.String getOrigin();
-    /**
-     * <code>optional string origin = 1;</code>
-     */
-    com.google.protobuf.ByteString
-        getOriginBytes();
-
-    /**
-     * <code>optional string content = 2;</code>
+     * <code>optional string content = 1;</code>
      */
     java.lang.String getContent();
     /**
-     * <code>optional string content = 2;</code>
+     * <code>optional string content = 1;</code>
      */
     com.google.protobuf.ByteString
         getContentBytes();
@@ -50,7 +40,6 @@ public final class ChatMessages {
       super(builder);
     }
     private Text() {
-      origin_ = "";
       content_ = "";
     }
 
@@ -82,12 +71,6 @@ public final class ChatMessages {
             case 10: {
               java.lang.String s = input.readStringRequireUtf8();
 
-              origin_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
               content_ = s;
               break;
             }
@@ -114,44 +97,10 @@ public final class ChatMessages {
               com.blastedstudios.chat.ChatMessages.Text.class, com.blastedstudios.chat.ChatMessages.Text.Builder.class);
     }
 
-    public static final int ORIGIN_FIELD_NUMBER = 1;
-    private volatile java.lang.Object origin_;
-    /**
-     * <code>optional string origin = 1;</code>
-     */
-    public java.lang.String getOrigin() {
-      java.lang.Object ref = origin_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        origin_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>optional string origin = 1;</code>
-     */
-    public com.google.protobuf.ByteString
-        getOriginBytes() {
-      java.lang.Object ref = origin_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        origin_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int CONTENT_FIELD_NUMBER = 2;
+    public static final int CONTENT_FIELD_NUMBER = 1;
     private volatile java.lang.Object content_;
     /**
-     * <code>optional string content = 2;</code>
+     * <code>optional string content = 1;</code>
      */
     public java.lang.String getContent() {
       java.lang.Object ref = content_;
@@ -166,7 +115,7 @@ public final class ChatMessages {
       }
     }
     /**
-     * <code>optional string content = 2;</code>
+     * <code>optional string content = 1;</code>
      */
     public com.google.protobuf.ByteString
         getContentBytes() {
@@ -194,11 +143,8 @@ public final class ChatMessages {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getOriginBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, origin_);
-      }
       if (!getContentBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, content_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, content_);
       }
     }
 
@@ -207,11 +153,8 @@ public final class ChatMessages {
       if (size != -1) return size;
 
       size = 0;
-      if (!getOriginBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, origin_);
-      }
       if (!getContentBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, content_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, content_);
       }
       memoizedSize = size;
       return size;
@@ -229,8 +172,6 @@ public final class ChatMessages {
       com.blastedstudios.chat.ChatMessages.Text other = (com.blastedstudios.chat.ChatMessages.Text) obj;
 
       boolean result = true;
-      result = result && getOrigin()
-          .equals(other.getOrigin());
       result = result && getContent()
           .equals(other.getContent());
       return result;
@@ -243,8 +184,6 @@ public final class ChatMessages {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptorForType().hashCode();
-      hash = (37 * hash) + ORIGIN_FIELD_NUMBER;
-      hash = (53 * hash) + getOrigin().hashCode();
       hash = (37 * hash) + CONTENT_FIELD_NUMBER;
       hash = (53 * hash) + getContent().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
@@ -365,8 +304,6 @@ public final class ChatMessages {
       }
       public Builder clear() {
         super.clear();
-        origin_ = "";
-
         content_ = "";
 
         return this;
@@ -391,7 +328,6 @@ public final class ChatMessages {
 
       public com.blastedstudios.chat.ChatMessages.Text buildPartial() {
         com.blastedstudios.chat.ChatMessages.Text result = new com.blastedstudios.chat.ChatMessages.Text(this);
-        result.origin_ = origin_;
         result.content_ = content_;
         onBuilt();
         return result;
@@ -434,10 +370,6 @@ public final class ChatMessages {
 
       public Builder mergeFrom(com.blastedstudios.chat.ChatMessages.Text other) {
         if (other == com.blastedstudios.chat.ChatMessages.Text.getDefaultInstance()) return this;
-        if (!other.getOrigin().isEmpty()) {
-          origin_ = other.origin_;
-          onChanged();
-        }
         if (!other.getContent().isEmpty()) {
           content_ = other.content_;
           onChanged();
@@ -468,78 +400,9 @@ public final class ChatMessages {
         return this;
       }
 
-      private java.lang.Object origin_ = "";
-      /**
-       * <code>optional string origin = 1;</code>
-       */
-      public java.lang.String getOrigin() {
-        java.lang.Object ref = origin_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          origin_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>optional string origin = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getOriginBytes() {
-        java.lang.Object ref = origin_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          origin_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string origin = 1;</code>
-       */
-      public Builder setOrigin(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        origin_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string origin = 1;</code>
-       */
-      public Builder clearOrigin() {
-        
-        origin_ = getDefaultInstance().getOrigin();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string origin = 1;</code>
-       */
-      public Builder setOriginBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        origin_ = value;
-        onChanged();
-        return this;
-      }
-
       private java.lang.Object content_ = "";
       /**
-       * <code>optional string content = 2;</code>
+       * <code>optional string content = 1;</code>
        */
       public java.lang.String getContent() {
         java.lang.Object ref = content_;
@@ -554,7 +417,7 @@ public final class ChatMessages {
         }
       }
       /**
-       * <code>optional string content = 2;</code>
+       * <code>optional string content = 1;</code>
        */
       public com.google.protobuf.ByteString
           getContentBytes() {
@@ -570,7 +433,7 @@ public final class ChatMessages {
         }
       }
       /**
-       * <code>optional string content = 2;</code>
+       * <code>optional string content = 1;</code>
        */
       public Builder setContent(
           java.lang.String value) {
@@ -583,7 +446,7 @@ public final class ChatMessages {
         return this;
       }
       /**
-       * <code>optional string content = 2;</code>
+       * <code>optional string content = 1;</code>
        */
       public Builder clearContent() {
         
@@ -592,7 +455,7 @@ public final class ChatMessages {
         return this;
       }
       /**
-       * <code>optional string content = 2;</code>
+       * <code>optional string content = 1;</code>
        */
       public Builder setContentBytes(
           com.google.protobuf.ByteString value) {
@@ -669,9 +532,9 @@ public final class ChatMessages {
   static {
     java.lang.String[] descriptorData = {
       "\n0main/java/com/blastedstudios/chat/mess" +
-      "ages.proto\022\005proto\"\'\n\004Text\022\016\n\006origin\030\001 \001(" +
-      "\t\022\017\n\007content\030\002 \001(\tB\'\n\027com.blastedstudios" +
-      ".chatB\014ChatMessagesb\006proto3"
+      "ages.proto\022\005proto\"\027\n\004Text\022\017\n\007content\030\001 \001" +
+      "(\tB\'\n\027com.blastedstudios.chatB\014ChatMessa" +
+      "gesb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -690,7 +553,7 @@ public final class ChatMessages {
     internal_static_proto_Text_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_proto_Text_descriptor,
-        new java.lang.String[] { "Origin", "Content", });
+        new java.lang.String[] { "Content", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

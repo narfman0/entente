@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -38,17 +39,6 @@ public abstract class BaseNetwork {
 			} catch (Exception e) {
 				Logger.getLogger(BaseNetwork.class.getName()).warning("Exception caching parse method for: " + clazz);
 			}
-	}
-	
-	/**
-	 * Distribute message to all listeners
-	 * a.k.a. receive, heed, execute, send
-	 */
-	public void receiveMessage(Message message, Socket origin){
-		List<IMessageListener> msgListeners = listeners.get(message.getClass());
-		if(msgListeners != null)
-			for(IMessageListener listener : msgListeners)
-				listener.receive(message, origin);
 	}
 
 	/**
@@ -120,8 +110,14 @@ public abstract class BaseNetwork {
 	 * @param messages: Messages to send
 	 * @param target: Destination host to which we shall send @param messages
 	 */
-	protected static void sendMessages(List<MessageStruct> messages, HostStruct target) throws IOException{
-		for(MessageStruct sendStruct : messages){
+	protected void sendMessages(HostStruct target) throws IOException{
+		// Build new list of messages to send this frame. Grab messages initially, don't check queue again!
+		ArrayList<MessageStruct> currentQueue = new ArrayList<>(sendQueue);
+		// "but jrob, thats a queue that could be modified between copying and clearing, you should iterate..."
+		// GTFO /uninstall /uninstall /uninstall
+		// no but you're right... *shrugs*
+		sendQueue.clear();
+		for(MessageStruct sendStruct : currentQueue){
 			if(sendStruct.destinations == null || sendStruct.destinations.contains(target.socket)){
 				target.outStream.writeInt(messageToID.get(sendStruct.message.getClass()));
 				target.outStream.writeInt(sendStruct.message.getSerializedSize());
@@ -132,7 +128,7 @@ public abstract class BaseNetwork {
 		target.outStream.flush();
 	}
 	
-	protected static List<MessageStruct> receiveMessages(DataInputStream stream, Socket socket) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException{
+	protected void receiveMessages(DataInputStream stream, Socket socket) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException{
 		List<MessageStruct> messages = new LinkedList<>();
 		while(socket.getInputStream().available() > 0 && socket.isConnected()){
 			int messageID = stream.readInt();
@@ -144,6 +140,11 @@ public abstract class BaseNetwork {
 			messages.add(new MessageStruct(message, Arrays.asList(socket)));
 			Logger.getLogger(BaseNetwork.class.getName()).fine("Received from: " + socket.toString());
 		}
-		return messages;
+		for(MessageStruct message : messages){
+			List<IMessageListener> msgListeners = listeners.get(message.message.getClass());
+			if(msgListeners != null)
+				for(IMessageListener listener : msgListeners)
+					listener.receive(message.message, socket);
+		}
 	}
 }
