@@ -6,9 +6,18 @@ apply plugin: 'signing'
 
 group = 'com.blastedstudios'
 mainClassName = "com.blastedstudios.entente.Host"
-version = '1.0.1'
+version = '1.0.2'
 description = "A java - google protocol buffers based communication library"
 defaultTasks 'eclipse', 'build', 'install', 'javadoc', 'createPom'
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java'
+            srcDirs 'samples/main/java'
+        }
+    }
+}
 
 ext {
 	appName = "entente"

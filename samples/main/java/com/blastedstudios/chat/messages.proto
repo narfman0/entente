@@ -1,0 +1,9 @@
+syntax = "proto3";
+package proto;
+
+option java_package = "com.blastedstudios.chat";
+option java_outer_classname = "ChatMessages";
+
+message Text {
+  string content = 1;
+}

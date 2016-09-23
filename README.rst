@@ -45,7 +45,7 @@ generated a class `Messages` which defines `Ping` and `Ack` messages.
 .. code-block::
 
 	client.subscribe(Ack.class, new IMessageListener<Ack>(){
-		void receive(Ack message, Socket origin){
+		public void receive(Ack message, Socket origin){
 			System.out.println("Received Ack!");
 		}
 	});
@@ -55,7 +55,7 @@ generated a class `Messages` which defines `Ping` and `Ack` messages.
 .. code-block::
 
 	host.subscribe(Ping.class, new IMessageListener<Ping>(){
-		void receive(Ping message, Socket origin){
+		public void receive(Ping message, Socket origin){
 			host.send(Ack.getDefaultInstance());
 		}
 	});
@@ -67,7 +67,8 @@ generated a class `Messages` which defines `Ping` and `Ack` messages.
 	client.send(Ping.getDefaultInstance());
 	
 Your host, which subscribed to `Ping.class`, will receive the message and
-immediately send and `Ack`. Congrats!
+immediately send and `Ack`. Congrats! For more examples, please see the samples
+directory.
 
 TODO
 ----

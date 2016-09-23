@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 public class Client extends BaseNetwork {
 	private HostStruct hostStruct;
 	
-	public boolean connect(String host, int port){
+	public Client(String host, int port){
 		try {
 			Socket socket = new Socket(host, port);
 			hostStruct = new HostStruct(socket);
@@ -16,7 +16,6 @@ public class Client extends BaseNetwork {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return isConnected();
 	}
 	
 	@Override public boolean update(){
