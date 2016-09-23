@@ -107,7 +107,6 @@ public abstract class BaseNetwork {
 	
 	/**
 	 * Send each message in queue to @param target hosts
-	 * @param messages: Messages to send
 	 * @param target: Destination host to which we shall send @param messages
 	 */
 	protected void sendMessages(HostStruct target) throws IOException{
